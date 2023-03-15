@@ -21,7 +21,7 @@ node {
     }
 
     stage('Push image to Nexus') {
-        sh 'docker login -u admin -p admin http://3.89.102.182:9091/repository/argocd-dev/'
+        sh 'docker.withRegistry('http://3.89.102.182:9091/repository/argocd-dev/', nexus_cred )  
             app.push("${env.BUILD_NUMBER}")
     }
     stage('Trigger Update Manifest') {
