@@ -21,7 +21,7 @@ node {
     }
 
     stage('Push image to Nexus') {
-        sh 'docker login -u admin -p admin http://34.228.37.180:9090/repository/argocd-dev/'
+        sh 'docker login -u admin -p admin123 http://34.228.37.180:9090/repository/argocd-dev/'
              app.push("${env.BUILD_NUMBER}")
     }
     stage('Trigger Update Manifest') {
