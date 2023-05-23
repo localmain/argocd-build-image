@@ -9,7 +9,7 @@ node {
 
     stage('Build Docker image') {
   
-       app = docker.build("54.167.54.52:8088/argocd-dev/localmain:${env.BUILD_NUMBER}")
+       app = docker.build("34.228.37.180:9090/argocd-dev/localmain:${env.BUILD_NUMBER}")
     }
 
     stage('Test Docker image') {
@@ -21,7 +21,7 @@ node {
     }
 
     stage('Push image to Nexus') {
-        sh 'docker login -u admin -p admin http://54.167.54.52:8088/repository/argocd-dev/'
+        sh 'docker login -u admin -p admin http://34.228.37.180:9090/repository/argocd-dev/'
              app.push("${env.BUILD_NUMBER}")
     }
     stage('Trigger Update Manifest') {
