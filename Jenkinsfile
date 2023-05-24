@@ -6,7 +6,7 @@
       stage('checkout') {
            steps {
              
-                git branch: 'master', url: 'https://github.com/localmain/argocd-build-image.git'
+                git branch: 'main', url: 'https://github.com/localmain/argocd-build-image.git'
              
           }
         }
@@ -34,5 +34,5 @@
                   build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
 	      }
     }
-    }
-}
+  }
+ }
