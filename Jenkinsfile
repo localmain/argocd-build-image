@@ -2,6 +2,7 @@
 	agent any		
 
  stages {
+	 
       stage('checkout') {
            steps {
              
@@ -11,7 +12,7 @@
         }
        
 
-  stage('Docker Build and Tag') {
+      stage('Docker Build and Tag') {
            steps {
               
                 sh 'docker build -t dev:latest .' 
@@ -19,7 +20,7 @@
                
           }
         }
-  stage('Publish image to Docker Hub') {
+      stage('Publish image to Docker Hub') {
             steps {
 		  withCredentials([string(credentialsId: 'dockerhub', variable: 'DockerHub')]) {
                     sh  'docker push munna998/dev: latest' 
@@ -27,9 +28,11 @@
                   
           }
         }
-  stage('Trigger Update Manifest') {
-        echo "triggering Update manifest Job"
-            build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+      stage('Trigger Update Manifest') {
+	      steps {     
+                  echo "triggering Update manifest Job"
+                  build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+	      }
     }
     }
 }
