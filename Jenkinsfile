@@ -5,7 +5,7 @@
       stage('checkout') {
            steps {
              
-                git branch: 'master', url: 'https://github.com/localmain/devops-practical-2.git'
+                git branch: 'master', url: 'https://github.com/localmain/argocd-build-image.git'
              
           }
         }
@@ -15,14 +15,14 @@
            steps {
               
                 sh 'docker build -t dev:latest .' 
-                sh 'docker tag dev munna998/dev:$BUILD_NUMBER'
+                sh 'docker tag dev munna998/dev:latest'
                
           }
         }
   stage('Publish image to Docker Hub') {
             steps {
-		    withDockerRegistry([credentialsId: "DockerHub", url: "" ]) {
-                    sh  'docker push munna998/dev:$BUILD_NUMBER' 
+		  withCredentials([string(credentialsId: 'dockerhub', variable: 'DockerHub')]) {
+                    sh  'docker push munna998/dev: latest' 
 		}
                   
           }
