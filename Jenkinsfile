@@ -22,7 +22,7 @@
         }
       stage('Publish image to Docker Hub') {
             steps {
-		  withCredentials([string(credentialsId: 'dockerhub', variable: 'DockerHub')]) {
+		  withDockerRegistry(credentialsId: 'docker', url: 'https://hub.docker.com/') {
                     sh  'docker push munna998/dev:latest' 
 		}
                   
