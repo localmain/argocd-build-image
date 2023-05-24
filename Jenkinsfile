@@ -16,7 +16,7 @@ node {
     
     stage('Push image to Nexus') {
         sh 'docker login -u admin -p admin123 http://34.228.37.180:9090/repository/argocd-dev/'
-        sh ' docker push 34.228.37.180:9090/argocd-dev/localmain
+        sh ' docker push 34.228.37.180:9090/argocd-dev/localmain'
     }
     stage('Trigger Update Manifest') {
         echo "triggering Update manifest Job"
