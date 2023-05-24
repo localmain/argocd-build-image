@@ -1,38 +1,32 @@
- pipeline {
-	agent any		
+node {
+    def app
 
- stages {
-	 
-      stage('checkout') {
-           steps {
-             
-                git branch: 'main', url: 'https://github.com/localmain/argocd-build-image.git'
-             
-          }
-        }
-       
+    stage('Clone repository') {
+      
 
-      stage('Docker Build and Tag') {
-           steps {
-              
-                sh 'docker build -t dev:latest .' 
-                sh 'docker tag dev munna998/dev:latest'
-               
-          }
-        }
-      stage('Publish image to Docker Hub') {
-            steps {
-		  withDockerRegistry([credentialsId: 'docker', url: ""]) {
-                    sh  'docker push munna998/dev:latest' 
-		}
-                  
-          }
-        }
-      stage('Trigger Update Manifest') {
-	      steps {     
-                  echo "triggering Update manifest Job"
-                  build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-	      }
+        checkout scm
     }
-  }
- }
+
+    stage('Build Docker image') {
+  
+       app = docker.build("34.228.37.180:9090/argocd-dev/odia:${env.BUILD_NUMBER}")
+    }
+
+    stage('Test Docker image') {
+  
+
+        app.inside {
+            sh 'echo "Tests passed"'
+        }
+    }
+
+    stage('Push image to Nexus') {
+        sh 'docker login -u admin -p admin123 http://34.228.37.180:9090/repository/argocd-dev/'
+            app.push("${env.BUILD_NUMBER}")
+    }
+    stage('Trigger Update Manifest') {
+        echo "triggering Update manifest Job"
+            build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+    }
+    
+}
