@@ -8,8 +8,9 @@ node {
     }
 
     stage('Build Docker image') {
-  
-       sh 'docker build -t "34.228.37.180:9090/argocd-dev/localmain' 
+        
+       sh 'docker build -t  localmain .'
+       sh 'docker tag localmain "34.228.37.180:9090/argocd-dev/localmain' 
         
     }
 
