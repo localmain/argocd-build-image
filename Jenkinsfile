@@ -1,27 +1,35 @@
-node {
-    def app
+ pipeline {
+	agent any		
 
-    stage('Clone repository') {
-      
+ stages {
+      stage('checkout') {
+           steps {
+             
+                git branch: 'master', url: 'https://github.com/localmain/devops-practical-2.git'
+             
+          }
+        }
+       
 
-        checkout scm
-    }
-
-    stage('Build Docker image') {
-        
-       sh 'docker build -t  localmain .'
-       sh 'docker tag localmain 34.228.37.180:9090/argocd-dev/localmain' 
-        
-    }
-
-    
-    stage('Push image to Nexus') {
-        sh 'docker login -u admin -p admin123 http://34.228.37.180:9090/repository/argocd-dev/'
-        sh ' docker push 34.228.37.180:9090/argocd-dev/localmain'
-    }
-    stage('Trigger Update Manifest') {
+  stage('Docker Build and Tag') {
+           steps {
+              
+                sh 'docker build -t dev:latest .' 
+                sh 'docker tag dev munna998/dev:$BUILD_NUMBER'
+               
+          }
+        }
+  stage('Publish image to Docker Hub') {
+            steps {
+		    withDockerRegistry([credentialsId: "DockerHub", url: "" ]) {
+                    sh  'docker push munna998/dev:$BUILD_NUMBER' 
+		}
+                  
+          }
+        }
+  stage('Trigger Update Manifest') {
         echo "triggering Update manifest Job"
-            build job: 'argocd-update-manifest' , parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+            build job: 'argocd-update-manifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
     }
-    
+    }
 }
