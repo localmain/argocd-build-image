@@ -9,7 +9,7 @@ node {
 
     stage('Build Docker image') {
   
-       app = docker.build(":9090/argocd-54.173.51.191dev/odia:${env.BUILD_NUMBER}")
+       app = docker.build("54.173.51.191:9090/argocd-dev/odia:${env.BUILD_NUMBER}")
     }
 
     stage('Test Docker image') {
